@@ -132,9 +132,18 @@ public class User extends BaseEntity implements UserDetails {
     @Column(name = "email_notifications")
     private Boolean emailNotifications = true;
 
-    // Relationships
+    // ... all your fields ...
+
+    // Initialize the set immediately - FIX
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @Builder.Default  // IMPORTANT: This ensures the set is initialized when using @Builder
     private Set<RefreshToken> refreshTokens = new HashSet<>();
+
+    // Also initialize other collections if you have them
+    // @Builder.Default
+    // private Set<Event> organizedEvents = new HashSet<>();
+
+
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "user_permissions", joinColumns = @JoinColumn(name = "user_id"))

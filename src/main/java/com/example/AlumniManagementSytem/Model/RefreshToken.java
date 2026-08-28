@@ -1,11 +1,13 @@
 package com.example.AlumniManagementSytem.Model;
-
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.Instant;
 
 @Entity
-@Table(name = "refresh_tokens")
+@Table(name = "refresh_tokens", indexes = {
+        @Index(name = "idx_refresh_token", columnList = "token"),
+        @Index(name = "idx_refresh_token_user", columnList = "user_id")
+})
 @Data
 @Builder
 @NoArgsConstructor
@@ -16,13 +18,13 @@ public class RefreshToken {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "token", length = 1000, nullable = false, unique = true)
+    @Column(nullable = false, unique = true, length = 500)  // Reduced from 1000 to 500
     private String token;
 
     @Column(nullable = false)
     private Instant expiryDate;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 50)
     private String tokenType;
 
     @Column(name = "is_revoked")
@@ -38,10 +40,10 @@ public class RefreshToken {
     @Column(name = "created_at", nullable = false)
     private Instant createdAt;
 
-    @Column(name = "device_info")
+    @Column(name = "device_info", length = 255)
     private String deviceInfo;
 
-    @Column(name = "ip_address")
+    @Column(name = "ip_address", length = 45)
     private String ipAddress;
 
     @PrePersist
@@ -56,6 +58,6 @@ public class RefreshToken {
     }
 
     public boolean isValid() {
-        return !isExpired() && !isRevoked && !isUsed;
+        return !isExpired() && Boolean.FALSE.equals(isRevoked) && Boolean.FALSE.equals(isUsed);
     }
 }
