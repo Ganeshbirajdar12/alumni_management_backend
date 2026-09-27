@@ -17,6 +17,7 @@ import com.example.AlumniManagementSytem.Repository.UserRepository;
 import com.example.AlumniManagementSytem.Security.JwtTokenProvider;
 import com.example.AlumniManagementSytem.Service.AuthService;
 import com.example.AlumniManagementSytem.enums.TokenType;
+import com.example.AlumniManagementSytem.enums.UserRole;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -70,7 +71,7 @@ public class AuthServiceImpl implements AuthService {
                 .firstName(request.getFirstName().trim())
                 .lastName(request.getLastName().trim())
                 .phoneNumber(request.getPhoneNumber())
-                .role(request.getRole())
+                .role(UserRole.ROLE_STUDENT)
                 .graduationYear(request.getGraduationYear())
                 .department(request.getDepartment())
                 .degree(request.getDegree())

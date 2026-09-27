@@ -38,8 +38,8 @@ public class RegisterRequest {
     @Pattern(regexp = "^\\+?[1-9]\\d{1,14}$", message = "Invalid phone number format")
     private String phoneNumber;
 
-    @NotNull(message = "Role is required")
-    private UserRole role;
+//    @NotNull(message = "Role is required")
+//    private UserRole role;
 
     @Size(min = 4, max = 4, message = "Graduation year must be 4 digits")
     private String graduationYear;

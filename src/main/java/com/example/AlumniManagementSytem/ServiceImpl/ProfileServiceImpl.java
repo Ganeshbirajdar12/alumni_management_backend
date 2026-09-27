@@ -3,10 +3,12 @@ package com.example.AlumniManagementSytem.ServiceImpl;
 
 import com.example.AlumniManagementSytem.DTOs.request.ProfileUpdateRequest;
 import com.example.AlumniManagementSytem.DTOs.response.ProfileResponse;
+import com.example.AlumniManagementSytem.Exception.BadRequestException;
 import com.example.AlumniManagementSytem.Exception.ResourceNotFoundException;
 import com.example.AlumniManagementSytem.Model.User;
 import com.example.AlumniManagementSytem.Repository.UserRepository;
 import com.example.AlumniManagementSytem.Service.ProfileService;
+import com.example.AlumniManagementSytem.enums.UserRole;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -41,7 +43,9 @@ public class ProfileServiceImpl implements ProfileService {
         User user = userRepository.findByEmail(email.toLowerCase())
                 .orElseThrow(() -> new ResourceNotFoundException("User", "email", email));
 
-        // Update only non-null fields
+        boolean isAlumni = user.getRole() == UserRole.ROLE_ALUMNI;
+
+        // ✅ Always allowed fields (Student + Alumni)
         if (request.getFirstName() != null) user.setFirstName(request.getFirstName().trim());
         if (request.getLastName() != null) user.setLastName(request.getLastName().trim());
         if (request.getPhoneNumber() != null) user.setPhoneNumber(request.getPhoneNumber());
@@ -49,10 +53,6 @@ public class ProfileServiceImpl implements ProfileService {
         if (request.getDepartment() != null) user.setDepartment(request.getDepartment());
         if (request.getDegree() != null) user.setDegree(request.getDegree());
         if (request.getRollNumber() != null) user.setRollNumber(request.getRollNumber());
-        if (request.getCurrentCompany() != null) user.setCurrentCompany(request.getCurrentCompany());
-        if (request.getCurrentPosition() != null) user.setCurrentPosition(request.getCurrentPosition());
-        if (request.getIndustry() != null) user.setIndustry(request.getIndustry());
-        if (request.getYearsOfExperience() != null) user.setYearsOfExperience(request.getYearsOfExperience());
         if (request.getLocation() != null) user.setLocation(request.getLocation());
         if (request.getProfilePicture() != null) user.setProfilePicture(request.getProfilePicture());
         if (request.getBio() != null) user.setBio(request.getBio());
@@ -63,11 +63,33 @@ public class ProfileServiceImpl implements ProfileService {
         if (request.getPersonalWebsite() != null) user.setPersonalWebsite(request.getPersonalWebsite());
         if (request.getEmailNotifications() != null) user.setEmailNotifications(request.getEmailNotifications());
 
-        // Check if profile is complete
+        // 🔒 Work info — ONLY for alumni
+        if (isAlumni) {
+            if (request.getCurrentCompany() != null) user.setCurrentCompany(request.getCurrentCompany());
+            if (request.getCurrentPosition() != null) user.setCurrentPosition(request.getCurrentPosition());
+            if (request.getIndustry() != null) user.setIndustry(request.getIndustry());
+            if (request.getYearsOfExperience() != null) user.setYearsOfExperience(request.getYearsOfExperience());
+        } else {
+            // 🚫 Student tried to send work info → reject entire request
+            boolean triedToUpdateWorkInfo =
+                    request.getCurrentCompany() != null ||
+                            request.getCurrentPosition() != null ||
+                            request.getIndustry() != null ||
+                            request.getYearsOfExperience() != null;
+
+            if (triedToUpdateWorkInfo) {
+                throw new BadRequestException(
+                        "Only alumni can update professional information. " +
+                                "Please request a promotion to unlock these fields."
+                );
+            }
+        }
+
+        // Update profile completion flag
         user.setProfileCompleted(isProfileComplete(user));
 
         user = userRepository.save(user);
-        log.info("Profile updated for user: {}", email);
+        log.info("Profile updated for {} (role: {})", email, user.getRole());
 
         return mapToProfileResponse(user);
     }

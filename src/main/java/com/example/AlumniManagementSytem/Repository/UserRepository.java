@@ -11,12 +11,16 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
 
     Optional<User> findByEmail(String email);
+
+    // Find users by role
+    List<User> findByRole(UserRole role);
 
     Optional<User> findByEmailAndIsActiveTrue(String email);
 
