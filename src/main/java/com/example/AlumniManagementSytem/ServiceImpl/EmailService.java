@@ -106,4 +106,34 @@ public class EmailService {
             log.error("Failed to send rejection email: {}", e.getMessage());
         }
     }
+
+    // ==================== WELCOME EMAIL ====================
+    public void sendAdminWelcomeEmail(String toEmail, String adminName, String tempPassword) {
+        try {
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setTo(toEmail);
+            message.setSubject("Welcome to AlumniHub Admin Team");
+            message.setText(
+                    "Hi " + adminName + ",\n\n" +
+                            "You've been added as an ADMIN to AlumniHub.\n\n" +
+                            "Your login credentials:\n" +
+                            "    Email:    " + toEmail + "\n" +
+                            "    Password: " + tempPassword + "\n\n" +
+                            "⚠️  Please change your password after first login.\n\n" +
+                            "You can now:\n" +
+                            "✓ Approve alumni promotions\n" +
+                            "✓ Manage users\n" +
+                            "✓ Manage events and jobs\n\n" +
+                            "Login at: http://localhost:5173/login\n\n" +
+                            "Best regards,\n" +
+                            "AlumniHub Team"
+            );
+
+            mailSender.send(message);
+            log.info("Admin welcome email sent to: {}", toEmail);
+        } catch (Exception e) {
+            log.error("Failed to send admin welcome email to {}: {}", toEmail, e.getMessage());
+            throw new RuntimeException("Failed to send email");
+        }
+    }
 }

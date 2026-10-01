@@ -91,7 +91,10 @@ public class SecurityConfig {
         configuration.setAllowedHeaders(java.util.Arrays.asList(
                 "Authorization",
                 "Content-Type",
-                "X-Requested-With"
+                "X-Requested-With",
+                "Refresh-Token",
+                "Accept",
+                "Origin"
         ));
         configuration.setExposedHeaders(java.util.Arrays.asList("Authorization"));
         configuration.setAllowCredentials(true);

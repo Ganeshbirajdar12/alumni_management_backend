@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+import com.example.AlumniManagementSytem.enums.UserRole;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -33,6 +34,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Boolean existsByPhoneNumber(String phoneNumber);
 
     Boolean existsByRollNumber(String rollNumber);
+
+    // Check if any user has this role (used by SuperAdminSeeder)
+    boolean existsByRole(UserRole role);
 
     @Modifying
     @Transactional

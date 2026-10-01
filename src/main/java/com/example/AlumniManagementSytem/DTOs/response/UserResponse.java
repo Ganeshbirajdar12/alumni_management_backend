@@ -44,4 +44,5 @@ public class UserResponse {
     private Boolean emailNotifications;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private Boolean isActive;
 }
