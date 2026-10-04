@@ -136,4 +136,111 @@ public class EmailService {
             throw new RuntimeException("Failed to send email");
         }
     }
+
+    // ==================== EVENT: RSVP CONFIRMATION ====================
+    public void sendRsvpConfirmation(String toEmail, String userName,
+                                     com.example.AlumniManagementSytem.Model.Event event) {
+        try {
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setTo(toEmail);
+            message.setSubject("✅ You're registered for: " + event.getTitle());
+            message.setText(
+                    "Hi " + userName + ",\n\n" +
+                            "You're all set! Your RSVP has been confirmed.\n\n" +
+                            "📅 Event: " + event.getTitle() + "\n" +
+                            "🕐 Date: " + event.getEventDate() + "\n" +
+                            (Boolean.TRUE.equals(event.getIsOnline())
+                                    ? "🌐 Online Event\n"
+                                    : "📍 Location: " + event.getLocation() + "\n") +
+                            "\n" +
+                            "We'll send you a reminder before the event.\n\n" +
+                            "See you there!\n\n" +
+                            "— AlumniHub Team"
+            );
+
+            mailSender.send(message);
+            log.info("RSVP confirmation sent to: {}", toEmail);
+        } catch (Exception e) {
+            log.error("Failed to send RSVP confirmation: {}", e.getMessage());
+        }
+    }
+
+    // ==================== EVENT: REMINDER ====================
+    public void sendEventReminder(String toEmail, String userName,
+                                  com.example.AlumniManagementSytem.Model.Event event,
+                                  String timeLeft) {
+        try {
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setTo(toEmail);
+            message.setSubject("⏰ Reminder: " + event.getTitle() + " starts in " + timeLeft);
+            message.setText(
+                    "Hi " + userName + ",\n\n" +
+                            "Just a friendly reminder that " + event.getTitle() + " starts in " + timeLeft + ".\n\n" +
+                            "📅 Event: " + event.getTitle() + "\n" +
+                            "🕐 Date: " + event.getEventDate() + "\n" +
+                            (Boolean.TRUE.equals(event.getIsOnline())
+                                    ? "🌐 Meeting Link: " + event.getMeetingLink() + "\n"
+                                    : "📍 Location: " + event.getLocation() + "\n") +
+                            "\n" +
+                            "Don't miss it!\n\n" +
+                            "— AlumniHub Team"
+            );
+
+            mailSender.send(message);
+            log.info("Event reminder sent to: {}", toEmail);
+        } catch (Exception e) {
+            log.error("Failed to send event reminder: {}", e.getMessage());
+        }
+    }
+
+    // ==================== EVENT: CANCELLED BY ORGANIZER ====================
+    public void sendEventCancelled(String toEmail, String userName,
+                                   com.example.AlumniManagementSytem.Model.Event event) {
+        try {
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setTo(toEmail);
+            message.setSubject("❌ Event Cancelled: " + event.getTitle());
+            message.setText(
+                    "Hi " + userName + ",\n\n" +
+                            "We're sorry to inform you that the following event has been cancelled:\n\n" +
+                            "📅 Event: " + event.getTitle() + "\n" +
+                            "🕐 Date: " + event.getEventDate() + "\n" +
+                            "\n" +
+                            "We apologize for the inconvenience.\n\n" +
+                            "— AlumniHub Team"
+            );
+
+            mailSender.send(message);
+            log.info("Event cancelled email sent to: {}", toEmail);
+        } catch (Exception e) {
+            log.error("Failed to send event cancelled email: {}", e.getMessage());
+        }
+    }
+
+    // ==================== EVENT: UPDATED ====================
+    public void sendEventUpdated(String toEmail, String userName,
+                                 com.example.AlumniManagementSytem.Model.Event event) {
+        try {
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setTo(toEmail);
+            message.setSubject("📝 Event Updated: " + event.getTitle());
+            message.setText(
+                    "Hi " + userName + ",\n\n" +
+                            "The organizer has made changes to an event you're attending:\n\n" +
+                            "📅 Event: " + event.getTitle() + "\n" +
+                            "🕐 New Date: " + event.getEventDate() + "\n" +
+                            (Boolean.TRUE.equals(event.getIsOnline())
+                                    ? "🌐 Online Event\n"
+                                    : "📍 Location: " + event.getLocation() + "\n") +
+                            "\n" +
+                            "Please check the event page for the latest details.\n\n" +
+                            "— AlumniHub Team"
+            );
+
+            mailSender.send(message);
+            log.info("Event updated email sent to: {}", toEmail);
+        } catch (Exception e) {
+            log.error("Failed to send event updated email: {}", e.getMessage());
+        }
+    }
 }
