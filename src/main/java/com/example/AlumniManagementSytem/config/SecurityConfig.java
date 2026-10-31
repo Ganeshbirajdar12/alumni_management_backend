@@ -83,7 +83,7 @@ public class SecurityConfig {
                 new org.springframework.web.cors.CorsConfiguration();
         configuration.setAllowedOrigins(java.util.Arrays.asList(
                 "http://localhost:3000",
-                "https://*.netlify.app",
+                "https://alumnihub1.netlify.app",
                 "http://localhost:5173"
         ));
         configuration.setAllowedMethods(java.util.Arrays.asList(
